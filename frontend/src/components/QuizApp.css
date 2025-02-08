@@ -1,0 +1,133 @@
+.title {
+    font-size: 32px;
+    font-weight: bold;
+    text-align: center;
+    margin-bottom: 20px;
+    color: #333 !important;
+    font-family: "Arial", sans-serif !important;
+    padding: 10px;
+    border-bottom: 3px solid #007bff;
+  
+    /* Gradient text effect */
+    background: linear-gradient(90deg, #007bff, #00c6ff);
+    background-clip: text;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+ 
+.h1 {
+    font-size: 26px;
+    font-weight: bold;
+    text-align: center;
+    margin-bottom: 20px;
+    color: #333;
+    font-family: Arial, sans-serif;
+    padding: 10px;
+    border-bottom: 3px solid #007bff;
+
+    /* Gradient text with full browser compatibility */
+    background: linear-gradient(90deg, #007bff, #00c6ff);
+    -webkit-background-clip: text;
+    -moz-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    -moz-text-fill-color: transparent;
+    text-fill-color: transparent;
+  }
+
+  .quiz-container {
+    font-family: Arial, sans-serif;
+    max-width: 600px;
+    margin: auto;
+    text-align: center;
+    background: #f9f9f9;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+  }
+  
+  .user-input {
+    padding: 8px;
+    font-size: 16px;
+    margin-bottom: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    width: 100%;
+    text-align: center;
+  }
+  
+  .question {
+    font-size: 20px;
+    font-weight: bold;
+    margin-bottom: 15px;
+  }
+  
+  .answer-list {
+    list-style: none;
+    padding: 0;
+  }
+  
+  .answer-button {
+    display: block;
+    width: 100%;
+    padding: 10px;
+    margin: 5px 0;
+    font-size: 16px;
+    border: 2px solid transparent;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.2s, border-color 0.3s;
+    border-radius: 5px;
+  }
+  
+  .answer-button:hover {
+    transform: scale(1.05);
+  }
+  
+  .selected {
+    background-color: lightblue !important;
+    border-color: blue;
+  }
+  
+  .correct {
+    background-color: lightgreen !important;
+    border-color: green;
+  }
+  
+  .incorrect {
+    background-color: lightcoral !important;
+    border-color: red;
+  }
+  
+  .submit-button {
+    padding: 10px 15px;
+    font-size: 16px;
+    margin-top: 10px;
+    cursor: pointer;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    transition: background-color 0.3s ease;
+  }
+  
+  .submit-button:disabled {
+    background-color: #aaa;
+  }
+  
+  .submit-button:hover {
+    background-color: #0056b3;
+  }
+  
+  .error {
+    color: red;
+  }
+  
+  .loading {
+    font-style: italic;
+  }
+  
+  .submission-result {
+    font-weight: bold;
+    margin-top: 10px;
+  }
+  
