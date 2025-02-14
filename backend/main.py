@@ -25,8 +25,8 @@ app.add_middleware(
 
 # Database connection function
 def get_db_connection():
-    # migration... conn = sqlite3.connect("data/aprender_ai.db") 
-    conn = sqlite3.connect("backend/data/aprender_ai.db")
+    # Path to the database
+    conn = sqlite3.connect("./data/aprender_ai.db")
     conn.row_factory = sqlite3.Row  # Enables dictionary-like row access
     return conn
 

@@ -6,33 +6,44 @@ function QuizApp() {
   const [error, setError] = useState(null);
   const [userId, setUserId] = useState(1);
   const [selectedAnswer, setSelectedAnswer] = useState(null);
-  const [submissionResult, setSubmissionResult] = useState(null); // ✅ Ensure this is initialized
-  const [isCorrect, setIsCorrect] = useState(null);
+  const [submissionResult, setSubmissionResult] = useState(null);
+  const [isCorrect, setIsCorrect] = useState(null); // Reset isCorrect for new questions
 
   useEffect(() => {
-    console.log("Fetching quiz data for user", userId);
-    setIsCorrect(null);  // ✅ Reset isCorrect when user ID changes
+    // Only fetch if the userId has changed and quizData is null (no current question data)
+    if (!userId || quizData) return;
+
+    console.log("Fetching quiz data for user", userId, "at", new Date().toLocaleTimeString());
+
+    setIsCorrect(null);  // Reset isCorrect when user ID changes
+    setQuizData(null); // Reset quiz data on user change
+    setSubmissionResult(null); // Reset previous submission result
+
     fetch(`http://127.0.0.1:8000/quiz/${userId}`)
-      .then(response => {
+      .then((response) => {
         if (!response.ok) {
           throw new Error("Server error, try again later.");
         }
         return response.json();
       })
-      .then(data => setQuizData(data))
-      .catch(error => setError(error.message));
-  }, [userId]);
+      .then((data) => {
+        console.log("Fetched quiz data:", data);
+        setQuizData(data);
+        setSelectedAnswer(null); // Reset selected answer when new quiz data arrives
+      })
+      .catch((error) => setError(error.message));
+  }, [userId, quizData]); // Trigger re-fetch when userId changes, but prevent unnecessary re-fetch if quizData already exists
 
   const submitAnswer = () => {
-    if (!selectedAnswer) return;
-  
+    if (!selectedAnswer) return; // Prevent submission if no answer selected
+
     console.log("Submitting answer:", {
       user_id: userId,
       question: quizData.question,
       user_answer: selectedAnswer,
-      correct_answer: quizData.answer ?? "Unknown",  // ✅ Ensure a valid value
+      correct_answer: quizData.answer ?? "Unknown",  // Ensure a valid value
     });
-  
+
     fetch("http://127.0.0.1:8000/quiz/submit", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -40,32 +51,38 @@ function QuizApp() {
         user_id: Number(userId),
         question: quizData.question,
         user_answer: selectedAnswer,
-        correct_answer: quizData.answer ?? "Unknown",  // ✅ Always send a valid answer
+        correct_answer: quizData.answer ?? "Unknown",  // Always send a valid answer
       }),
     })
-      .then(response => response.json())
-      .then(data => {
+      .then((response) => response.json())
+      .then((data) => {
         console.log("Answer response:", data);
+        setIsCorrect(data.correct); // Update isCorrect based on response
         setSubmissionResult(data.correct ? "✅ Correct!" : "❌ Incorrect!");
         setTimeout(() => {
           setSelectedAnswer(null);
           setSubmissionResult(null);
-          setQuizData(null);
-        }, 2000);
+          setQuizData(null); // Reset quiz data to fetch next question
+        }, 2000); // After 2 seconds, reset and load the next question
       })
-      .catch(error => {
+      .catch((error) => {
         console.error("Error submitting quiz:", error);
         setSubmissionResult("⚠️ Submission Failed. Try Again.");
       });
   };
-  
 
-  if (error) return <p style={{ color: "red" }}>{error}</p>;
-  if (!quizData) return <p>Loading quiz...</p>;
+  if (error) return <p style={{ color: "red" }}>{error}</p>; // Display error if occurred
+  if (!quizData) return <p>Loading quiz...</p>; // Show loading if no quiz data yet
 
   return (
     <div className="quiz-container">
-      <h1><img src="/MexicanAIpersonalizedLearningAssistant_Logo.png" alt="Aprender AI - Interactive Spanish Quiz" className="quiz-logo" /></h1>
+      <h1>
+        <img
+          src="/MexicanAIpersonalizedLearningAssistant_Logo.png"
+          alt="Aprender AI - Interactive Spanish Quiz"
+          className="quiz-logo"
+        />
+      </h1>
       <h2>Enter your User ID:</h2>
       <input
         type="number"
@@ -77,8 +94,16 @@ function QuizApp() {
       <ul className="answer-list">
         {quizData.choices.map((choice, index) => (
           <li key={index}>
-            <button 
-              className={`answer-button ${selectedAnswer === choice ? (isCorrect === true ? "correct" : isCorrect === false ? "incorrect" : "selected") : ""}`}
+            <button
+              className={`answer-button ${
+                selectedAnswer === choice
+                  ? isCorrect === true
+                    ? "correct"
+                    : isCorrect === false
+                    ? "incorrect"
+                    : "selected"
+                  : ""
+              }`}
               onClick={() => setSelectedAnswer(choice)}
             >
               {choice}
@@ -87,7 +112,9 @@ function QuizApp() {
         ))}
       </ul>
       {submissionResult && <p className="submission-result">{submissionResult}</p>}
-      <button className="submit-button" onClick={submitAnswer} disabled={!selectedAnswer}>Submit Answer</button>
+      <button className="submit-button" onClick={submitAnswer} disabled={!selectedAnswer}>
+        Submit Answer
+      </button>
     </div>
   );
 }
