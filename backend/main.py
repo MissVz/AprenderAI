@@ -202,7 +202,7 @@ async def plot_difficulty_trend(user_id: int):
             SELECT DATE(timestamp) AS quiz_date, COUNT(*) AS attempts,
                    SUM(is_correct) AS correct_answers,
                    (SUM(is_correct) * 100.0 / COUNT(*)) AS accuracy
-            FROM quiz_logs
+            FROM user_progress
             WHERE user_id = ?
             GROUP BY quiz_date
             ORDER BY quiz_date ASC;
