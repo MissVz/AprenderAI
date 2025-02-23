@@ -14,10 +14,10 @@ import pandas as pd
 
 app = FastAPI()
 
-# Enable CORS
+# Enable CORS for the frontend at http://127.0.0.1:5173
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:5173"],  # Allow frontend origin
+    allow_origins=["http://127.0.0.1:5173"],  # Allow frontend to make requests
     allow_credentials=True,
     allow_methods=["*"],  # Allow all HTTP methods
     allow_headers=["*"],  # Allow all headers
@@ -25,8 +25,8 @@ app.add_middleware(
 
 # Database connection function
 def get_db_connection():
-    # migration... conn = sqlite3.connect("data/aprender_ai.db") 
-    conn = sqlite3.connect("backend/data/aprender_ai.db")
+    # Path to the database
+    conn = sqlite3.connect("./data/aprender_ai.db")
     conn.row_factory = sqlite3.Row  # Enables dictionary-like row access
     return conn
 
@@ -202,7 +202,7 @@ async def plot_difficulty_trend(user_id: int):
             SELECT DATE(timestamp) AS quiz_date, COUNT(*) AS attempts,
                    SUM(is_correct) AS correct_answers,
                    (SUM(is_correct) * 100.0 / COUNT(*)) AS accuracy
-            FROM quiz_logs
+            FROM user_progress
             WHERE user_id = ?
             GROUP BY quiz_date
             ORDER BY quiz_date ASC;

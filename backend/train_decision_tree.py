@@ -6,9 +6,12 @@ from sklearn.tree import DecisionTreeClassifier
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import accuracy_score
 
-# Path to save the model
-# migration... model_path = "data/decision_tree_model.pkl"
-model_path = "backend/data/decision_tree_model.pkl"
+
+# Ensure the directory exists
+model_dir = Path("data")  # Change from "backend/data" to "data"
+model_dir.mkdir(parents=True, exist_ok=True)
+
+model_path = model_dir / "decision_tree_model.pkl"
 
 # Connect to SQLite and fetch training data
 def load_data():
