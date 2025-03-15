@@ -14,10 +14,10 @@ import pandas as pd
 
 app = FastAPI()
 
-# Enable CORS for the frontend at http://127.0.0.1:5173
+# Enable CORS for the frontend at http://127.0.0.1:5173 or http://localhost:5173
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://127.0.0.1:5173"],  # Allow frontend to make requests
+    allow_origins=["http://localhost:5173", "http://127.0.0.1:5173"],  # Allow frontend to make requests
     allow_credentials=True,
     allow_methods=["*"],  # Allow all HTTP methods
     allow_headers=["*"],  # Allow all headers
@@ -26,7 +26,7 @@ app.add_middleware(
 # Database connection function
 def get_db_connection():
     # Path to the database
-    conn = sqlite3.connect("./data/aprender_ai.db")
+    conn = sqlite3.connect("data/aprender_ai.db")
     conn.row_factory = sqlite3.Row  # Enables dictionary-like row access
     return conn
 
@@ -37,9 +37,12 @@ clf = joblib.load(model_path)
 # Initialize Q-table for reinforcement learning
 Q_table = defaultdict(lambda: [0, 0, 0])  # Beginner, Intermediate, Advanced states
 
+# def predict_difficulty(attempts, accuracy):
+#     input_data = np.array([[attempts, accuracy]])
+#     return clf.predict(input_data)[0]  # Returns 0 (Beginner), 1 (Intermediate), 2 (Advanced)
 def predict_difficulty(attempts, accuracy):
-    input_data = np.array([[attempts, accuracy]])
-    return clf.predict(input_data)[0]  # Returns 0 (Beginner), 1 (Intermediate), 2 (Advanced)
+    input_data = pd.DataFrame([[attempts, accuracy]], columns=["attempts", "accuracy"])
+    return clf.predict(input_data)[0]
 
 def q_learning_adjust_difficulty(user_id, current_difficulty, reward):
     """
@@ -212,6 +215,12 @@ async def plot_difficulty_trend(user_id: int):
 
         if df.empty:
             return {"message": "No quiz data found for this user."}
+        
+        # Handle None values in 'accuracy'
+        df["accuracy"] = df["accuracy"].fillna(0)  # Replace None with 0
+
+        # Convert 'quiz_date' to string if needed
+        df["quiz_date"] = df["quiz_date"].astype(str)
 
         # Plot difficulty trend
         plt.figure(figsize=(10, 6))
