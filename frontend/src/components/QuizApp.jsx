@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from "react";
 import "./QuizApp.css"; // Import CSS file for styling
 
+const API_BASE_URL = "http://localhost:8000";  // ✅ Use "localhost", NOT "127.0.0.1"
+
 function QuizApp() {
   const [quizData, setQuizData] = useState(null);
   const [error, setError] = useState(null);
@@ -19,7 +21,7 @@ function QuizApp() {
     setQuizData(null); // Reset quiz data on user change
     setSubmissionResult(null); // Reset previous submission result
 
-    fetch(`http://127.0.0.1:8000/quiz/${userId}`)
+    fetch(`${API_BASE_URL}/quiz/${userId}`)
       .then((response) => {
         if (!response.ok) {
           throw new Error("Server error, try again later.");
@@ -44,7 +46,7 @@ function QuizApp() {
       correct_answer: quizData.answer ?? "Unknown",  // Ensure a valid value
     });
 
-    fetch("http://127.0.0.1:8000/quiz/submit", {
+    fetch(`${API_BASE_URL}/quiz/submit`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
